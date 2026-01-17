@@ -1,0 +1,19 @@
+services:
+  homepage:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage
+    ports:
+      - 3000:3000
+    volumes:
+      - /home/user/stacks/homepage/config:/app/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    user: "1000:991"  # francesco:docker
+
+    environment:
+#      PUID: "1000"
+#      PGID: "1000"
+      TZ: "Europe/Berlin"
+      HOMEPAGE_ALLOWED_HOSTS: "home.example.com,example.duckdns.org,example.ddns.net,${HOST_IP}:3000,homepage.local:3000,localhost:3000" 
+    restart: unless-stopped
+#    group_add:
+#      - "991"  # GID del gruppo docker

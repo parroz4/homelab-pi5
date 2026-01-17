@@ -4,74 +4,112 @@ Documentazione completa del mio homelab basato su Raspberry Pi 5, con focus su s
 
 ## 📋 Indice
 
-- [Hardware](#hardware)
-- [Servizi attivi](#servizi-attivi)
-- [Architettura](#architettura)
-- [Quick Start](#quick-start)
-- [Backup Strategy](#backup-strategy)
-- [Sicurezza](#sicurezza)
-- [Manutenzione](#manutenzione)
+- [Hardware](#-hardware)
+- [Servizi Attivi](#-servizi-attivi)
+- [Struttura Repository](#-struttura-repository)
+- [Quick Start](#-quick-start)
+- [Architettura](#-architettura)
+- [Sicurezza](#-sicurezza)
+- [Backup Strategy](#-backup-strategy)
+- [Manutenzione](#-manutenzione)
 
 ## 🖥️ Hardware
 
-- **SBC**: Raspberry Pi 5 (8GB RAM)
-- **Storage**: SSD esterno USB 3.0
-  - Sistema: ext4 (per container Docker)
-  - Media/Backup: exFAT (per compatibilità multi-piattaforma)
-- **Rete**: Ethernet Gigabit
-- **OS**: Raspberry Pi OS (64-bit)
+| Componente | Specifica |
+|------------|-----------|
+| **SBC** | Raspberry Pi 5 (8GB RAM) |
+| **Storage OS** | SD Card 64GB |
+| **Storage Dati** | SSD esterno USB 3.0 |
+| **Rete** | Ethernet Gigabit |
+| **OS** | Raspberry Pi OS (64-bit, Debian Bookworm) |
 
-## 🚀 Servizi attivi
+## 🚀 Servizi Attivi
 
-### Gestione Media
-- **Immich**: Gestione foto e video (~75.000 foto, 4.800 video, 218GB)
-- **Paperless-ngx**: Gestione documentale con OCR
+### 📺 Media (4 servizi)
+| Servizio | Descrizione | Porta |
+|----------|-------------|-------|
+| [Immich](stacks/media/immich/) | Gestione foto e video self-hosted | 2283 |
+| [Jellyfin](stacks/media/jellyfin/) | Media server per film e serie | 8096 |
+| [Paperless-ngx](stacks/media/paperless/) | Gestione documentale con OCR | 8010 |
+| [Filebrowser](stacks/media/filebrowser/) | File manager web | 8082 |
 
-### Networking & Sicurezza
-- **Pi-hole**: DNS filtering e ad-blocking
-- **Cloudflare Tunnel**: Accesso remoto sicuro (no port forwarding)
-- **Cloudflare Access**: Autenticazione con Google OAuth + geo-restriction
+### 🤖 Automation (2 servizi)
+| Servizio | Descrizione | Porta |
+|----------|-------------|-------|
+| [Home Assistant](stacks/automation/homeassistant/) | Smart home automation | 8123 |
+| [N8N](stacks/automation/n8n/) | Workflow automation | 5678 |
 
-### Monitoring
-- **Beszel**: Monitoring sistema
-- **Uptime Kuma**: Monitoring servizi
-- **NetAlertX**: Monitoring rete
-- **changedetection.io**: Monitoring siti web
-- **Homepage**: Dashboard centralizzata
+### 📊 Monitoring (5 servizi)
+| Servizio | Descrizione | Porta |
+|----------|-------------|-------|
+| [Beszel](stacks/monitoring/beszel/) | System monitoring | 8090 |
+| [Uptime Kuma](stacks/monitoring/uptime-kuma/) | Service uptime monitoring | 3001 |
+| [NetAlertX](stacks/monitoring/netalertx/) | Network device monitoring | 20211 |
+| [Speedtest Tracker](stacks/monitoring/speedtest-tracker/) | Internet speed monitoring | 8080 |
+| [ChangeDetection](stacks/monitoring/changedetection/) | Website change monitoring | 5000 |
 
-### Automation
-- **N8N**: Workflow automation (YouTube monitoring + Gemini AI + Telegram)
+### 🌐 Network (2 servizi)
+| Servizio | Descrizione | Porta |
+|----------|-------------|-------|
+| [Pi-hole](stacks/network/pihole/) | DNS filtering e ad-blocking | 80, 53 |
+| [Cloudflared](stacks/network/cloudflared/) | Cloudflare Tunnel | - |
 
-### Management
-- **Dockge**: Gestione container Docker
-- **Backrest**: Backup management (Backblaze B2)
+### ⚙️ Management (3 servizi)
+| Servizio | Descrizione | Porta |
+|----------|-------------|-------|
+| [Portainer](stacks/management/portainer/) | Docker management UI | 9443 |
+| [Homepage](stacks/management/homepage/) | Dashboard centralizzata | 3000 |
+| [Backrest](stacks/management/backrest/) | Backup management (Restic) | 9898 |
 
-## 🏗️ Architettura
+### 🔧 Utilities (1 servizio)
+| Servizio | Descrizione | Porta |
+|----------|-------------|-------|
+| [Warracker](stacks/utilities/warracker/) | Warranty tracker | 8005 |
 
-### Struttura Directory
+**Totale: 17 servizi containerizzati**
+
+## 📁 Struttura Repository
+
 ```
-/home/francesco/stacks/
-├── immich/
-├── paperless-ngx/
-├── monitoring/
-├── network/
-└── automation/
+homelab-pi5/
+├── README.md
+├── .gitignore
+├── stacks/
+│   ├── media/
+│   │   ├── immich/
+│   │   ├── jellyfin/
+│   │   ├── paperless/
+│   │   └── filebrowser/
+│   ├── automation/
+│   │   ├── homeassistant/
+│   │   └── n8n/
+│   ├── monitoring/
+│   │   ├── beszel/
+│   │   ├── uptime-kuma/
+│   │   ├── netalertx/
+│   │   ├── speedtest-tracker/
+│   │   └── changedetection/
+│   ├── network/
+│   │   ├── pihole/
+│   │   └── cloudflared/
+│   ├── management/
+│   │   ├── portainer/
+│   │   ├── homepage/
+│   │   └── backrest/
+│   └── utilities/
+│       └── warracker/
+├── docs/
+│   ├── setup/
+│   ├── architecture/
+│   └── troubleshooting/
+├── scripts/
+└── templates/
 ```
-
-### Networking
-- Accesso esterno: `parroz44.xyz` (placeholder: `example.com`)
-- Tunnel Cloudflare per tutti i servizi
-- Nessun port forwarding sul router
-- Autenticazione centralizzata via Cloudflare Access
-
-### Storage Strategy
-- **Container data**: SSD ext4 montato su `/path/to/docker/data`
-- **Media files**: SSD exFAT montato su `/path/to/media`
-- **Backup**: Locale (SSD) + Cloud (Backblaze B2)
 
 ## 🚀 Quick Start
 
 ### Prerequisiti
+
 ```bash
 # Aggiorna sistema
 sudo apt update && sudo apt upgrade -y
@@ -85,64 +123,86 @@ sudo usermod -aG docker $USER
 sudo reboot
 ```
 
-### Clone e Setup
+### Deploy di un servizio
+
 ```bash
 # Clone repository
-git clone https://github.com/TUO_USERNAME/homelab-pi5.git
+git clone https://github.com/YOUR_USERNAME/homelab-pi5.git
 cd homelab-pi5
 
-# Copia template ambiente
-cp stacks/immich/.env.example stacks/immich/.env
-cp stacks/paperless-ngx/.env.example stacks/paperless-ngx/.env
-# ... ripeti per ogni servizio
+# Scegli un servizio (es. Jellyfin)
+cd stacks/media/jellyfin
 
-# Modifica i file .env con i tuoi valori
-nano stacks/immich/.env
-```
+# Copia e configura environment
+cp .env.example .env
+nano .env  # modifica con i tuoi valori
 
-### Deploy Servizi
-```bash
-# Esempio: Deploy Immich
-cd stacks/immich
+# Deploy
 docker compose up -d
 
-# Verifica status
+# Verifica
 docker compose ps
 docker compose logs -f
 ```
 
-## 💾 Backup Strategy
+## 🏗️ Architettura
 
-Strategia 3-2-1:
-- **3** copie dei dati
-- **2** media diversi (SSD locale + Cloud)
-- **1** copia off-site (Backblaze B2)
+### Networking
+- **Accesso esterno**: Cloudflare Tunnel (zero port forwarding)
+- **DNS locale**: Pi-hole per ad-blocking e DNS filtering
+- **Autenticazione**: Cloudflare Access con Google OAuth
+- **Geo-restriction**: Attiva per tutti i servizi esposti
 
-Backup gestito tramite **Backrest**:
-- Backup automatici programmati
-- Retention policy configurabile
-- Restore testato e funzionante
+### Storage Strategy
+```
+/home/user/stacks/          # Compose files e config
+/mnt/external-drive/        # Media e dati persistenti
+├── immich/                 # Foto e video
+├── paperless/              # Documenti
+├── jellyfin/               # Film e serie
+└── backups/                # Backup locali
+```
 
-Dettagli: [docs/architecture/backup-strategy.md](docs/architecture/backup-strategy.md)
+### Container Management
+- **Dockge**: UI per gestione stack Docker
+- **Portainer**: Management avanzato container
+- **Watchtower**: Auto-update container (opzionale)
 
 ## 🔒 Sicurezza
 
 ### Gestione Secrets
-- **IMPORTANTE**: Mai committare file `.env` reali
+- ⚠️ **Mai committare file `.env` reali**
 - Usare sempre i template `.env.example`
-- Sostituire valori sensibili con placeholder
+- Secrets gestiti via variabili d'ambiente
 
 ### Accesso Remoto
-- Cloudflare Tunnel (no esposizione diretta)
-- Cloudflare Access con Google OAuth
-- Geo-restriction attiva
+- Cloudflare Tunnel (nessuna porta esposta)
+- Cloudflare Access con OAuth
 - Rate limiting configurato
+- Geo-restriction attiva
 
-### Best Practices
-- Aggiornamenti regolari dei container
-- Monitoring attivo 24/7
-- Log centralizati
-- Backup testati regolarmente
+### Best Practices implementate
+- [x] No password di default
+- [x] HTTPS ovunque (via Cloudflare)
+- [x] Aggiornamenti regolari
+- [x] Monitoring 24/7
+- [x] Backup automatici
+
+## 💾 Backup Strategy
+
+Strategia **3-2-1**:
+- **3** copie dei dati
+- **2** media diversi (SSD locale + Cloud)
+- **1** copia off-site (Backblaze B2)
+
+| Dato | Frequenza | Destinazione |
+|------|-----------|--------------|
+| Config Docker | Giornaliero | Backblaze B2 |
+| Database | Giornaliero | Locale + B2 |
+| Media (Immich) | Settimanale | Backblaze B2 |
+| Documenti (Paperless) | Giornaliero | Backblaze B2 |
+
+Gestito tramite **Backrest** con Restic backend.
 
 ## 🔧 Manutenzione
 
@@ -156,28 +216,34 @@ docker image prune -f
 
 ### Health Check
 ```bash
-# Verifica tutti i container
+# Status tutti i container
 docker ps -a
 
+# Risorse sistema
+docker stats
+
 # Log specifico servizio
-docker compose -f stacks/SERVICE_NAME/docker-compose.yml logs -f
+docker compose logs -f SERVICE_NAME
 ```
 
-### Spazio Disco
+### Pulizia periodica
 ```bash
-# Verifica spazio
-df -h
+# Pulizia Docker (ATTENZIONE: rimuove tutto lo inutilizzato)
+docker system prune -a
 
-# Pulizia Docker
-docker system prune -a --volumes
+# Solo immagini dangling
+docker image prune
+
+# Log di sistema
+sudo journalctl --vacuum-size=500M
 ```
 
-## 📚 Documentazione
+## 📚 Documentazione Aggiuntiva
 
 - [Setup Iniziale](docs/setup/initial-setup.md)
 - [Configurazione Cloudflare](docs/setup/cloudflare-tunnel.md)
 - [Configurazione Storage](docs/setup/storage-configuration.md)
-- [Troubleshooting Paperless](docs/troubleshooting/paperless-integrity.md)
+- [Troubleshooting](docs/troubleshooting/)
 - [Decisioni Architetturali](docs/architecture/decisions.md)
 
 ## 🤝 Contributing
@@ -188,6 +254,6 @@ Questo è principalmente un progetto personale, ma suggerimenti e issue sono ben
 
 MIT License - Sentiti libero di usare e modificare per il tuo homelab.
 
-## ⚠️ Disclaimer
+---
 
-Questa documentazione riflette il mio setup personale. Adatta le configurazioni alle tue esigenze e al tuo ambiente di rete.
+⚠️ **Disclaimer**: Questa documentazione riflette il mio setup personale. Adatta le configurazioni alle tue esigenze e al tuo ambiente di rete. I valori sensibili sono stati sostituiti con placeholder.

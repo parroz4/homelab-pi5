@@ -28,10 +28,10 @@ secrets/
 # DATI PERSONALI
 # ============================================
 
-# Upload e media personali
+# Upload e media personali (content, not config)
 */upload/
 */uploads/
-*/media/
+# */media/  # Commented out - we have stacks/media/ for configs
 */library/
 */photos/
 */thumbs/

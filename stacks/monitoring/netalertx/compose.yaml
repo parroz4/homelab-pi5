@@ -1,0 +1,63 @@
+services:
+  netalertx:
+  #use an environmental variable to set host networking mode if needed
+    container_name: netalertx                       # The name when you docker contiainer ls
+    image: ghcr.io/jokob-sk/netalertx-dev:latest
+    network_mode: ${NETALERTX_NETWORK_MODE:-host}   # Use host networking for ARP scanning and other services
+
+    read_only: true                                 # Make the container filesystem read-only
+    cap_drop:                                       # Drop all capabilities for enhanced security
+      - ALL
+    cap_add:                                        # Add only the necessary capabilities
+      - NET_ADMIN                                   # Required for ARP scanning
+      - NET_RAW                                     # Required for raw socket operations
+      - NET_BIND_SERVICE                            # Required to bind to privileged ports (nbtscan)
+
+    volumes:
+      - ./config:/app/config
+      - ./db:/app/db
+      - ./data:/data
+      - /etc/localtime:/etc/localtime:ro
+
+      # Mount your DHCP server file into NetAlertX for a plugin to access
+      # - path/on/host/to/dhcp.file:/resources/dhcp.file
+
+      # Retain logs - comment out tmpfs /app/log if you want to retain logs between container restarts
+      # - /path/on/host/log:/app/log
+
+    # Tempfs mounts for writable directories in a read-only container and improve system performance
+    # All mounts have noexec,nosuid,nodev for security purposes no devices, no suid/sgid and no execution of binaries
+    # async where possible for performance, sync where required for correctness
+    # uid=20211 and gid=20211 is the netalertx user inside the container
+    # mode=1700 gives rwx------ permissions to the netalertx user only
+    tmpfs:
+      # Speed up logging. This can be commented out to retain logs between container restarts
+      - "/app/log:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # Speed up API access as frontend/backend API is very chatty
+      - "/app/api:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,sync,noatime,nodiratime"  
+      # Required for customization of the nginx listen addr/port without rebuilding the container
+      - "/services/config/nginx/conf.active:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # /services/config/nginx/conf.d is required for nginx and php to start
+      - "/services/run:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+      # /tmp is required by php for session save this should be reworked to /services/run/tmp
+      - "/tmp:uid=20211,gid=20211,mode=1700,rw,noexec,nosuid,nodev,async,noatime,nodiratime"
+    environment:
+      LISTEN_ADDR: ${LISTEN_ADDR:-0.0.0.0}                   # Listen for connections on all interfaces
+      PORT: ${PORT:-20211}                                   # Application port
+      GRAPHQL_PORT: ${GRAPHQL_PORT:-20212}                   # GraphQL API port (passed into APP_CONF_OVERRIDE at runtime)
+      NETALERTX_DEBUG: ${NETALERTX_DEBUG:-0}                 # 0=kill all services and restart if any dies. 1 keeps running dead services.
+
+    # Resource limits to prevent resource exhaustion
+    mem_limit: 2048m            # Maximum memory usage
+    mem_reservation: 1024m      # Soft memory limit
+    cpu_shares: 512             # Relative CPU weight for CPU contention scenarios
+    pids_limit: 512             # Limit the number of processes/threads to prevent fork bombs
+    logging:
+      driver: "json-file"       # Use JSON file logging driver
+      options:
+        max-size: "10m"         # Rotate log files after they reach 10MB
+        max-file: "3"           # Keep a maximum of 3 log files
+
+    # Always restart the container unless explicitly stopped
+    restart: unless-stopped
+

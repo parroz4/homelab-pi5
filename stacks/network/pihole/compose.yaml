@@ -1,0 +1,28 @@
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    network_mode: host
+    hostname: pihole
+    environment:
+      TZ: 'Europe/Berlin'
+      WEBPASSWORD: '${PIHOLE_PASSWORD}'
+      DNSMASQ_LISTENING: 'all'
+      FTLCONF_LOCAL_IPV4: '${HOST_IP}'
+      PIHOLE_DNS_: '8.8.8.8;8.8.4.4'
+
+    volumes:
+      - ./pihole/etc-pihole:/etc/pihole
+      - ./pihole/etc-dnsmasq.d:/etc/dnsmasq.d
+    restart: unless-stopped
+    cap_add:
+      - NET_ADMIN
+
+#**Cambiamenti:**
+#- ✅ Rimosso `ports` (non servono con host network)
+#- ✅ Aggiunto `network_mode: host`
+#- ✅ Aggiunto `FTLCONF_LOCAL_IPV4` per specificare l'IP
+#- ✅ Aggiunto `cap_add: NET_ADMIN` per permessi di rete
+
+#Poi accederai a Pi-hole su:
+#http://${HOST_IP}/admin

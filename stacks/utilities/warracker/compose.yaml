@@ -1,0 +1,55 @@
+services:
+  warracker:
+    image: ghcr.io/sassanix/warracker/main:latest
+    ports:
+      - "8005:80"
+    volumes:
+      - ./uploads:/data/uploads
+    environment:
+      - DB_HOST=warrackerdb
+      - DB_PORT=${DB_PORT:-5432}
+      - DB_NAME=warranty_db
+      - DB_USER=warranty_user
+      - DB_PASSWORD=${DB_PASSWORD:-warranty_password}
+      - SMTP_HOST=smtp.email.com
+      - SMTP_PORT=465
+      - SMTP_USERNAME=youremail@email.com
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SECRET_KEY=${APP_SECRET_KEY:-your_strong_default_secret_key_here} 
+      - MAX_UPLOAD_MB=32 # Example: Set max upload size to 32MB 
+      - NGINX_MAX_BODY_SIZE_VALUE=32M # For Nginx, ensure this matches MAX_UPLOAD_MB in concept (e.g., 32M)
+      # OIDC SSO Configuration (User needs to set these based on their OIDC provider)
+      - OIDC_PROVIDER_NAME=${OIDC_PROVIDER_NAME:-oidc}
+      - OIDC_CLIENT_ID=${OIDC_CLIENT_ID:-} # e.g., your_oidc_client_id_from_provider
+      - OIDC_CLIENT_SECRET=${OIDC_CLIENT_SECRET:-} # e.g., your_oidc_client_secret_from_provider
+      - OIDC_ISSUER_URL=${OIDC_ISSUER_URL:-} # e.g., https://your-oidc-provider.com/auth/realms/your-realm
+      - OIDC_SCOPE=${OIDC_SCOPE:-openid email profile}
+      # URL settings (Important for OIDC redirects and email links)
+      # Ensure these point to the public-facing URL of your application
+      - FRONTEND_URL=${FRONTEND_URL:-http://localhost:8005} 
+      - APP_BASE_URL=${APP_BASE_URL:-http://localhost:8005}
+      # Memory optimization settings
+      - WARRACKER_MEMORY_MODE=${WARRACKER_MEMORY_MODE:-optimized} # Options: optimized (default), ultra-light
+      - PYTHONUNBUFFERED=1
+    # - FLASK_DEBUG=0
+    depends_on:
+      warrackerdb:
+        condition: service_healthy
+    restart: unless-stopped
+  
+  warrackerdb:
+    image: postgres:15-alpine
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=warranty_db
+      - POSTGRES_USER=warranty_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD:-warranty_password}
+    restart: unless-stopped
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
