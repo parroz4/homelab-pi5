@@ -14,7 +14,7 @@ services:
       - SMTP_HOST=smtp.email.com
       - SMTP_PORT=465
       - SMTP_USERNAME=youremail@email.com
-      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - SMTP_PASSWORD=password
       - SECRET_KEY=${APP_SECRET_KEY:-your_strong_default_secret_key_here} 
       - MAX_UPLOAD_MB=32 # Example: Set max upload size to 32MB 
       - NGINX_MAX_BODY_SIZE_VALUE=32M # For Nginx, ensure this matches MAX_UPLOAD_MB in concept (e.g., 32M)
