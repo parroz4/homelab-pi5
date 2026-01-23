@@ -38,6 +38,7 @@ declare -A FOLDER_MAP=(
     ["warracker"]="utilities/warracker"
     ["syncthing"]="media/syncthing"
     ["isponsorblocktv"]="utilities/isponsorblocktv"
+    ["kaneo"]="utilities/kaneo"
 )
 
 # Sanitization function

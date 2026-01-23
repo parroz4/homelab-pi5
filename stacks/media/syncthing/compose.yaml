@@ -8,7 +8,7 @@ services:
       - PGID=1000
     volumes:
       - ./config:/var/syncthing/config
-      - /home/user:/var/syncthing/home
+      - /home/francesco:/var/syncthing/home
       - /mnt/external-drive:/var/syncthing/external
     ports:
       - 8384:8384      # Web UI
