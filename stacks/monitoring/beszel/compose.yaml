@@ -22,6 +22,6 @@ services:
     environment:
       LISTEN: /beszel_socket/beszel.sock
       HUB_URL: http://localhost:8090
-      TOKEN: 1101-d8cb507df8-15ad-c7c7c55bf2
-      KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIHByIQH1AdlorjEobT9tQGo7wKJUBm0OqsU+QJAOFoiM
+      TOKEN: ${BESZEL_TOKEN}
+      KEY: ${BESZEL_SSH_KEY}
 networks: {}

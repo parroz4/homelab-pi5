@@ -1,0 +1,18 @@
+services:
+  syncthing:
+    image: syncthing/syncthing:latest
+    container_name: syncthing
+    hostname: raspberrypi
+    environment:
+      - PUID=1000
+      - PGID=1000
+    volumes:
+      - ./config:/var/syncthing/config
+      - /home/user:/var/syncthing/home
+      - /mnt/external-drive:/var/syncthing/external
+    ports:
+      - 8384:8384      # Web UI
+      - 22000:22000/tcp # TCP sync
+      - 22000:22000/udp # QUIC sync
+      - 21027:21027/udp # Discovery
+    restart: unless-stopped

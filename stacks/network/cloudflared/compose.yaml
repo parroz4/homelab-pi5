@@ -8,7 +8,6 @@ services:
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
     networks:
       - cloudflare_net
-
 networks:
   cloudflare_net:
     driver: bridge

@@ -11,10 +11,10 @@ services:
       - DB_NAME=warranty_db
       - DB_USER=warranty_user
       - DB_PASSWORD=${DB_PASSWORD:-warranty_password}
-      - SMTP_HOST=smtp.email.com
-      - SMTP_PORT=465
-      - SMTP_USERNAME=youremail@email.com
-      - SMTP_PASSWORD=password
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT}
+      - SMTP_USERNAME=${SMTP_USERNAME}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
       - SECRET_KEY=${APP_SECRET_KEY:-your_strong_default_secret_key_here} 
       - MAX_UPLOAD_MB=32 # Example: Set max upload size to 32MB 
       - NGINX_MAX_BODY_SIZE_VALUE=32M # For Nginx, ensure this matches MAX_UPLOAD_MB in concept (e.g., 32M)

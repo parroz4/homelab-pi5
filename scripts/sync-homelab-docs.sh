@@ -36,6 +36,8 @@ declare -A FOLDER_MAP=(
     ["homepage"]="management/homepage"
     ["backrest"]="management/backrest"
     ["warracker"]="utilities/warracker"
+    ["syncthing"]="media/syncthing"
+    ["isponsorblocktv"]="utilities/isponsorblocktv"
 )
 
 # Sanitization function

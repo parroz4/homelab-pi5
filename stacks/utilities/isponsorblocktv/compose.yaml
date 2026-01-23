@@ -1,0 +1,8 @@
+services:
+  isponsorblocktv:
+    image: ghcr.io/dmunozv04/isponsorblocktv
+    container_name: isponsorblocktv
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - ./data:/app/data
