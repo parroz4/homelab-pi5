@@ -1,0 +1,12 @@
+services:
+  wud:
+    image: ghcr.io/getwud/wud
+    container_name: wud
+    ports:
+      - "3003:3000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      - WUD_WATCHER_LOCAL_CRON=0 6 * * *
+      - TZ=Europe/Rome
+    restart: unless-stopped

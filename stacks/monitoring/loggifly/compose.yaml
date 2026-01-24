@@ -1,0 +1,10 @@
+services:
+  loggifly:
+    image: ghcr.io/clemcer/loggifly:v1
+    container_name: loggifly
+    volumes:
+      - ./config:/config
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - TZ=Europe/Rome
+    restart: unless-stopped

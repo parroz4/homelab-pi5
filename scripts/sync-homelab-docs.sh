@@ -39,6 +39,8 @@ declare -A FOLDER_MAP=(
     ["syncthing"]="media/syncthing"
     ["isponsorblocktv"]="utilities/isponsorblocktv"
     ["kaneo"]="utilities/kaneo"
+    ["wud"]="monitoring/wud"
+    ["loggifly"]="monitoring/loggifly"
 )
 
 # Sanitization function
