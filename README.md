@@ -25,13 +25,15 @@ Documentazione completa del mio homelab basato su Raspberry Pi 5, con focus su s
 
 ## 🚀 Servizi Attivi
 
-### 📺 Media (4 servizi)
+### 📺 Media (6 servizi)
 | Servizio | Descrizione | Porta |
 |----------|-------------|-------|
 | [Immich](stacks/media/immich/) | Gestione foto e video self-hosted | 2283 |
 | [Jellyfin](stacks/media/jellyfin/) | Media server per film e serie | 8096 |
 | [Paperless-ngx](stacks/media/paperless/) | Gestione documentale con OCR | 8010 |
 | [Filebrowser](stacks/media/filebrowser/) | File manager web | 8082 |
+| [Syncthing](stacks/media/syncthing/) | File sync P2P | 8384 |
+| [Sync-in](stacks/media/sync-in/) | File sync server | 8085 |
 
 ### 🤖 Automation (2 servizi)
 | Servizio | Descrizione | Porta |
@@ -39,7 +41,7 @@ Documentazione completa del mio homelab basato su Raspberry Pi 5, con focus su s
 | [Home Assistant](stacks/automation/homeassistant/) | Smart home automation | 8123 |
 | [N8N](stacks/automation/n8n/) | Workflow automation | 5678 |
 
-### 📊 Monitoring (5 servizi)
+### 📊 Monitoring (7 servizi)
 | Servizio | Descrizione | Porta |
 |----------|-------------|-------|
 | [Beszel](stacks/monitoring/beszel/) | System monitoring | 8090 |
@@ -47,6 +49,8 @@ Documentazione completa del mio homelab basato su Raspberry Pi 5, con focus su s
 | [NetAlertX](stacks/monitoring/netalertx/) | Network device monitoring | 20211 |
 | [Speedtest Tracker](stacks/monitoring/speedtest-tracker/) | Internet speed monitoring | 8080 |
 | [ChangeDetection](stacks/monitoring/changedetection/) | Website change monitoring | 5000 |
+| [WUD](stacks/monitoring/wud/) | Container updates monitoring | 3003 |
+| [LoggiFly](stacks/monitoring/loggifly/) | Container logs monitoring | - |
 
 ### 🌐 Network (2 servizi)
 | Servizio | Descrizione | Porta |
@@ -61,12 +65,14 @@ Documentazione completa del mio homelab basato su Raspberry Pi 5, con focus su s
 | [Homepage](stacks/management/homepage/) | Dashboard centralizzata | 3000 |
 | [Backrest](stacks/management/backrest/) | Backup management (Restic) | 9898 |
 
-### 🔧 Utilities (1 servizio)
+### 🔧 Utilities (3 servizi)
 | Servizio | Descrizione | Porta |
 |----------|-------------|-------|
 | [Warracker](stacks/utilities/warracker/) | Warranty tracker | 8005 |
+| [iSponsorBlockTV](stacks/utilities/isponsorblocktv/) | YouTube sponsor skipper per TV | - |
+| [Kaneo](stacks/utilities/kaneo/) | Project management | 5173 |
 
-**Totale: 17 servizi containerizzati**
+**Totale: 23 servizi containerizzati**
 
 ## 📁 Struttura Repository
 
@@ -79,7 +85,9 @@ homelab-pi5/
 │   │   ├── immich/
 │   │   ├── jellyfin/
 │   │   ├── paperless/
-│   │   └── filebrowser/
+│   │   ├── filebrowser/
+│   │   ├── syncthing/
+│   │   └── sync-in/
 │   ├── automation/
 │   │   ├── homeassistant/
 │   │   └── n8n/
@@ -88,7 +96,9 @@ homelab-pi5/
 │   │   ├── uptime-kuma/
 │   │   ├── netalertx/
 │   │   ├── speedtest-tracker/
-│   │   └── changedetection/
+│   │   ├── changedetection/
+│   │   ├── wud/
+│   │   └── loggifly/
 │   ├── network/
 │   │   ├── pihole/
 │   │   └── cloudflared/
@@ -97,7 +107,9 @@ homelab-pi5/
 │   │   ├── homepage/
 │   │   └── backrest/
 │   └── utilities/
-│       └── warracker/
+│       ├── warracker/
+│       ├── isponsorblocktv/
+│       └── kaneo/
 ├── docs/
 │   ├── setup/
 │   ├── architecture/
