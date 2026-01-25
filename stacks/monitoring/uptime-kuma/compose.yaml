@@ -1,6 +1,6 @@
 services:
   uptime-kuma:
-    image: louislam/uptime-kuma:2
+    image: louislam/uptime-kuma:2.0.2
     container_name: uptime-kuma
     ports:
       - 3001:3001
@@ -8,3 +8,4 @@ services:
       - ./data:/app/data
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
+networks: {}

@@ -41,6 +41,7 @@ declare -A FOLDER_MAP=(
     ["kaneo"]="utilities/kaneo"
     ["wud"]="monitoring/wud"
     ["loggifly"]="monitoring/loggifly"
+    ["sync-in"]="media/sync-in"
 )
 
 # Sanitization function

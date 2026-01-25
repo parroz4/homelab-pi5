@@ -8,5 +8,9 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       - WUD_WATCHER_LOCAL_CRON=0 6 * * *
+      - WUD_WATCHER_LOCAL_WATCHBYDEFAULT=true
       - TZ=Europe/Rome
+      # Telegram notifications
+      - WUD_TRIGGER_TELEGRAM_1_BOTTOKEN=${TELEGRAM_BOT_TOKEN}
+      - WUD_TRIGGER_TELEGRAM_1_CHATID=${TELEGRAM_CHAT_ID}
     restart: unless-stopped
