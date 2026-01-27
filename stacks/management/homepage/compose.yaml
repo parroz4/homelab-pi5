@@ -7,7 +7,7 @@ services:
     volumes:
       - /home/user/stacks/homepage/config:/app/config
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    user: "1000:991"  # francesco:docker
+    user: "1000:991"  # user:docker
 
     environment:
 #      PUID: "1000"

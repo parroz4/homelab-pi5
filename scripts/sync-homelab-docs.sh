@@ -91,6 +91,9 @@ sanitize_file() {
     # Email addresses
     sed -i 's/[a-zA-Z0-9._%+-]*@gmail\.com/${USER_EMAIL}/g' "$file"
 
+    # Name in comments
+    sed -i 's/francesco/user/gi' "$file"
+
     # Generic secrets/keys/tokens (catch-all for common patterns)
     sed -i 's/AUTH_SECRET=.*/AUTH_SECRET=${AUTH_SECRET}/g' "$file"
     sed -i 's/password: .*/password: ${PASSWORD}/g' "$file"

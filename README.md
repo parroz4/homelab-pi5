@@ -1,271 +1,243 @@
-# Homelab Raspberry Pi 5
+# Homelab Infrastructure - Raspberry Pi 5
 
-Documentazione completa del mio homelab basato su Raspberry Pi 5, con focus su self-hosting, privacy e automazione.
+> A production-grade self-hosted infrastructure running 23 containerized services on a Raspberry Pi 5, demonstrating DevOps practices, Infrastructure as Code, and system administration skills.
 
-## 📋 Indice
+[![Docker](https://img.shields.io/badge/Docker-23_containers-blue?logo=docker)](https://www.docker.com/)
+[![Raspberry Pi](https://img.shields.io/badge/Raspberry_Pi-5_(8GB)-red?logo=raspberrypi)](https://www.raspberrypi.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-- [Hardware](#-hardware)
-- [Servizi Attivi](#-servizi-attivi)
-- [Struttura Repository](#-struttura-repository)
-- [Quick Start](#-quick-start)
-- [Architettura](#-architettura)
-- [Sicurezza](#-sicurezza)
-- [Backup Strategy](#-backup-strategy)
-- [Manutenzione](#-manutenzione)
+## About This Project
 
-## 🖥️ Hardware
+This repository documents a fully functional homelab infrastructure that I built and maintain. It showcases practical experience with:
 
-| Componente | Specifica |
-|------------|-----------|
-| **SBC** | Raspberry Pi 5 (8GB RAM) |
-| **Storage OS** | SD Card 64GB |
-| **Storage Dati** | SSD esterno USB 3.0 |
-| **Rete** | Ethernet Gigabit |
-| **OS** | Raspberry Pi OS (64-bit, Debian Bookworm) |
+- **Container Orchestration**: 23 Docker services managed via compose files
+- **Infrastructure as Code**: All configurations versioned and reproducible
+- **Networking & Security**: Zero-trust architecture with Cloudflare Tunnel
+- **Monitoring & Observability**: Multi-layer monitoring stack with alerting
+- **Backup & Disaster Recovery**: Automated 3-2-1 backup strategy
+- **CI/CD Practices**: Automated sync scripts with secret sanitization
 
-## 🚀 Servizi Attivi
+## Skills Demonstrated
 
-### 📺 Media (6 servizi)
-| Servizio | Descrizione | Porta |
-|----------|-------------|-------|
-| [Immich](stacks/media/immich/) | Gestione foto e video self-hosted | 2283 |
-| [Jellyfin](stacks/media/jellyfin/) | Media server per film e serie | 8096 |
-| [Paperless-ngx](stacks/media/paperless/) | Gestione documentale con OCR | 8010 |
-| [Filebrowser](stacks/media/filebrowser/) | File manager web | 8082 |
-| [Syncthing](stacks/media/syncthing/) | File sync P2P | 8384 |
-| [Sync-in](stacks/media/sync-in/) | File sync server | 8085 |
+| Area | Technologies |
+|------|-------------|
+| **Containerization** | Docker, Docker Compose, container networking |
+| **Networking** | DNS (Pi-hole), reverse proxy, Cloudflare Tunnel, OAuth |
+| **Monitoring** | Beszel, Uptime Kuma, LoggiFly, WUD, Telegram alerts |
+| **Automation** | Home Assistant, N8N workflows, bash scripting |
+| **Security** | Secret management, geo-restriction, HTTPS everywhere |
+| **Backup** | Restic, Backrest, Backblaze B2, 3-2-1 strategy |
+| **Linux Admin** | Debian/Raspberry Pi OS, systemd, permissions, storage |
 
-### 🤖 Automation (2 servizi)
-| Servizio | Descrizione | Porta |
-|----------|-------------|-------|
-| [Home Assistant](stacks/automation/homeassistant/) | Smart home automation | 8123 |
-| [N8N](stacks/automation/n8n/) | Workflow automation | 5678 |
+## Architecture Overview
 
-### 📊 Monitoring (7 servizi)
-| Servizio | Descrizione | Porta |
-|----------|-------------|-------|
-| [Beszel](stacks/monitoring/beszel/) | System monitoring | 8090 |
-| [Uptime Kuma](stacks/monitoring/uptime-kuma/) | Service uptime monitoring | 3001 |
-| [NetAlertX](stacks/monitoring/netalertx/) | Network device monitoring | 20211 |
-| [Speedtest Tracker](stacks/monitoring/speedtest-tracker/) | Internet speed monitoring | 8080 |
-| [ChangeDetection](stacks/monitoring/changedetection/) | Website change monitoring | 5000 |
-| [WUD](stacks/monitoring/wud/) | Container updates monitoring | 3003 |
-| [LoggiFly](stacks/monitoring/loggifly/) | Container logs monitoring | - |
+```
+                                    INTERNET
+                                        │
+                                        ▼
+                              ┌─────────────────┐
+                              │  Cloudflare     │
+                              │  (WAF + Tunnel) │
+                              └────────┬────────┘
+                                       │
+                    ┌──────────────────┼──────────────────┐
+                    │           RASPBERRY PI 5            │
+                    │                                     │
+                    │  ┌─────────────┐  ┌─────────────┐  │
+                    │  │  Pi-hole    │  │ Cloudflared │  │
+                    │  │  (DNS)      │  │  (Tunnel)   │  │
+                    │  └─────────────┘  └─────────────┘  │
+                    │                                     │
+                    │  ┌───────────────────────────────┐ │
+                    │  │     DOCKER CONTAINERS         │ │
+                    │  │  ┌─────┐ ┌─────┐ ┌─────┐     │ │
+                    │  │  │Media│ │ Mon │ │ Mgmt│ ... │ │
+                    │  │  └─────┘ └─────┘ └─────┘     │ │
+                    │  └───────────────────────────────┘ │
+                    │                  │                  │
+                    └──────────────────┼──────────────────┘
+                                       │
+                              ┌────────┴────────┐
+                              │   External SSD  │
+                              │   (Data Store)  │
+                              └─────────────────┘
+```
 
-### 🌐 Network (2 servizi)
-| Servizio | Descrizione | Porta |
-|----------|-------------|-------|
-| [Pi-hole](stacks/network/pihole/) | DNS filtering e ad-blocking | 80, 53 |
-| [Cloudflared](stacks/network/cloudflared/) | Cloudflare Tunnel | - |
+## Services Stack (23 containers)
 
-### ⚙️ Management (3 servizi)
-| Servizio | Descrizione | Porta |
-|----------|-------------|-------|
-| [Portainer](stacks/management/portainer/) | Docker management UI | 9443 |
-| [Homepage](stacks/management/homepage/) | Dashboard centralizzata | 3000 |
-| [Backrest](stacks/management/backrest/) | Backup management (Restic) | 9898 |
+### Media & Storage
+| Service | Purpose | Why I Chose It |
+|---------|---------|----------------|
+| **Immich** | Photo management | Google Photos alternative, full AI features |
+| **Jellyfin** | Media streaming | Open-source Plex alternative |
+| **Paperless-ngx** | Document management | OCR + full-text search |
+| **Filebrowser** | Web file manager | Simple, lightweight |
+| **Syncthing** | P2P file sync | No cloud dependency |
 
-### 🔧 Utilities (3 servizi)
-| Servizio | Descrizione | Porta |
-|----------|-------------|-------|
-| [Warracker](stacks/utilities/warracker/) | Warranty tracker | 8005 |
-| [iSponsorBlockTV](stacks/utilities/isponsorblocktv/) | YouTube sponsor skipper per TV | - |
-| [Kaneo](stacks/utilities/kaneo/) | Project management | 5173 |
+### Monitoring & Observability
+| Service | Purpose | Why I Chose It |
+|---------|---------|----------------|
+| **Beszel** | System metrics | Lightweight, Pi-optimized |
+| **Uptime Kuma** | Service monitoring | Beautiful UI, flexible alerts |
+| **NetAlertX** | Network discovery | Track all devices |
+| **WUD** | Container updates | Know when to update |
+| **LoggiFly** | Log monitoring | Real-time Telegram alerts |
+| **Speedtest Tracker** | ISP monitoring | Historical bandwidth data |
+| **ChangeDetection** | Website monitoring | Track external changes |
 
-**Totale: 23 servizi containerizzati**
+### Networking & Security
+| Service | Purpose | Why I Chose It |
+|---------|---------|----------------|
+| **Pi-hole** | DNS + Ad-blocking | Network-wide protection |
+| **Cloudflared** | Secure tunnel | Zero exposed ports |
 
-## 📁 Struttura Repository
+### Management
+| Service | Purpose | Why I Chose It |
+|---------|---------|----------------|
+| **Portainer** | Container UI | Visual management |
+| **Homepage** | Dashboard | Single pane of glass |
+| **Backrest** | Backup orchestration | Restic made easy |
+
+### Automation
+| Service | Purpose | Why I Chose It |
+|---------|---------|----------------|
+| **Home Assistant** | Smart home | Local-first automation |
+| **N8N** | Workflow automation | Self-hosted Zapier |
+
+## Key Architecture Decisions
+
+### 1. Cloudflare Tunnel vs Traditional Reverse Proxy
+**Decision**: Use Cloudflare Tunnel instead of exposing ports with nginx/Traefik
+
+**Rationale**:
+- Zero open ports on router (security)
+- Free SSL certificates and WAF
+- DDoS protection included
+- Geo-restriction capabilities
+
+**Trade-off**: Dependency on Cloudflare, but benefits outweigh for home use
+
+### 2. External SSD for Data, SD Card for OS
+**Decision**: Separate storage tiers
+
+**Rationale**:
+- SD cards have limited write cycles
+- SSD provides better I/O for databases and media
+- Easy to backup/migrate data independently
+
+### 3. Multi-layer Monitoring
+**Decision**: Multiple specialized tools vs single solution
+
+**Rationale**:
+- Beszel: Low-overhead system metrics
+- Uptime Kuma: Service availability
+- LoggiFly: Real-time log analysis
+- WUD: Container update tracking
+
+Each tool excels at its specific job rather than one mediocre all-in-one
+
+### 4. Telegram for Alerting
+**Decision**: Telegram bot for all notifications
+
+**Rationale**:
+- Free, reliable, instant push notifications
+- Works globally without self-hosting
+- Easy API integration
+- Supports rich formatting
+
+## Security Implementation
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    SECURITY LAYERS                       │
+├─────────────────────────────────────────────────────────┤
+│  Layer 1: Cloudflare WAF + DDoS Protection              │
+│  Layer 2: Cloudflare Access (OAuth authentication)      │
+│  Layer 3: Geo-restriction (Italy only for most)         │
+│  Layer 4: Pi-hole DNS filtering                         │
+│  Layer 5: Container isolation (Docker networks)         │
+│  Layer 6: No default passwords, env-based secrets       │
+└─────────────────────────────────────────────────────────┘
+```
+
+**Secrets Management**:
+- All secrets in `.env` files (gitignored)
+- Compose files use `${VARIABLE}` placeholders
+- Automated sanitization script before commits
+- Git history cleaned of any leaked secrets
+
+## Backup Strategy (3-2-1 Rule)
+
+| Data Type | Local | Cloud | Frequency |
+|-----------|-------|-------|-----------|
+| Docker configs | SSD | Backblaze B2 | Daily |
+| Databases | SSD | Backblaze B2 | Daily |
+| Photos (Immich) | SSD | Backblaze B2 | Weekly |
+| Documents | SSD | Backblaze B2 | Daily |
+
+Managed via **Backrest** with **Restic** backend - incremental, encrypted, deduplicated.
+
+## Lessons Learned
+
+1. **RAM is the bottleneck** on Pi 5 - careful service selection matters
+2. **Monitoring your monitoring** - LoggiFly catches issues before users do
+3. **Secrets in git history** are forever - sanitize BEFORE committing
+4. **Document everything** - this repo is the documentation
+5. **Start simple, add complexity** - each service earned its place
+
+## Repository Structure
 
 ```
 homelab-pi5/
-├── README.md
-├── .gitignore
-├── stacks/
-│   ├── media/
-│   │   ├── immich/
-│   │   ├── jellyfin/
-│   │   ├── paperless/
-│   │   ├── filebrowser/
-│   │   ├── syncthing/
-│   │   └── sync-in/
-│   ├── automation/
-│   │   ├── homeassistant/
-│   │   └── n8n/
-│   ├── monitoring/
-│   │   ├── beszel/
-│   │   ├── uptime-kuma/
-│   │   ├── netalertx/
-│   │   ├── speedtest-tracker/
-│   │   ├── changedetection/
-│   │   ├── wud/
-│   │   └── loggifly/
-│   ├── network/
-│   │   ├── pihole/
-│   │   └── cloudflared/
-│   ├── management/
-│   │   ├── portainer/
-│   │   ├── homepage/
-│   │   └── backrest/
-│   └── utilities/
-│       ├── warracker/
-│       ├── isponsorblocktv/
-│       └── kaneo/
-├── docs/
-│   ├── setup/
-│   ├── architecture/
-│   └── troubleshooting/
-├── scripts/
-└── templates/
+├── README.md                 # This file
+├── stacks/                   # Docker compose files by category
+│   ├── media/               # Immich, Jellyfin, Paperless...
+│   ├── monitoring/          # Beszel, Uptime Kuma, WUD...
+│   ├── network/             # Pi-hole, Cloudflared
+│   ├── management/          # Portainer, Homepage, Backrest
+│   ├── automation/          # Home Assistant, N8N
+│   └── utilities/           # Various tools
+├── scripts/                  # Automation scripts
+│   └── sync-homelab-docs.sh # Sanitizes and syncs configs
+└── docs/                     # Additional documentation
 ```
 
-## 🚀 Quick Start
-
-### Prerequisiti
+## Quick Start
 
 ```bash
-# Aggiorna sistema
-sudo apt update && sudo apt upgrade -y
-
-# Installa Docker
-curl -fsSL https://get.docker.com -o get-docker.sh
-sudo sh get-docker.sh
-sudo usermod -aG docker $USER
-
-# Riavvia per applicare i permessi
-sudo reboot
-```
-
-### Deploy di un servizio
-
-```bash
-# Clone repository
+# Clone and deploy any service
 git clone https://github.com/YOUR_USERNAME/homelab-pi5.git
-cd homelab-pi5
+cd homelab-pi5/stacks/media/jellyfin
 
-# Scegli un servizio (es. Jellyfin)
-cd stacks/media/jellyfin
-
-# Copia e configura environment
+# Configure environment
 cp .env.example .env
-nano .env  # modifica con i tuoi valori
+nano .env
 
 # Deploy
 docker compose up -d
-
-# Verifica
-docker compose ps
-docker compose logs -f
 ```
 
-## 🏗️ Architettura
+## Hardware
 
-### Networking
-- **Accesso esterno**: Cloudflare Tunnel (zero port forwarding)
-- **DNS locale**: Pi-hole per ad-blocking e DNS filtering
-- **Autenticazione**: Cloudflare Access con Google OAuth
-- **Geo-restriction**: Attiva per tutti i servizi esposti
+| Component | Specification |
+|-----------|---------------|
+| SBC | Raspberry Pi 5 (8GB RAM) |
+| OS Storage | 64GB SD Card |
+| Data Storage | 1TB External SSD (USB 3.0) |
+| Network | Gigabit Ethernet |
+| OS | Raspberry Pi OS (Debian Bookworm, 64-bit) |
 
-### Storage Strategy
-```
-/home/user/stacks/          # Compose files e config
-/mnt/external-drive/        # Media e dati persistenti
-├── immich/                 # Foto e video
-├── paperless/              # Documenti
-├── jellyfin/               # Film e serie
-└── backups/                # Backup locali
-```
+## Future Improvements
 
-### Container Management
-- **Dockge**: UI per gestione stack Docker
-- **Portainer**: Management avanzato container
-- **Watchtower**: Auto-update container (opzionale)
+- [ ] Kubernetes migration (k3s) for learning
+- [ ] Prometheus + Grafana stack
+- [ ] Automated testing for compose files
+- [ ] Terraform for Cloudflare configuration
 
-## 🔒 Sicurezza
+## License
 
-### Gestione Secrets
-- ⚠️ **Mai committare file `.env` reali**
-- Usare sempre i template `.env.example`
-- Secrets gestiti via variabili d'ambiente
-
-### Accesso Remoto
-- Cloudflare Tunnel (nessuna porta esposta)
-- Cloudflare Access con OAuth
-- Rate limiting configurato
-- Geo-restriction attiva
-
-### Best Practices implementate
-- [x] No password di default
-- [x] HTTPS ovunque (via Cloudflare)
-- [x] Aggiornamenti regolari
-- [x] Monitoring 24/7
-- [x] Backup automatici
-
-## 💾 Backup Strategy
-
-Strategia **3-2-1**:
-- **3** copie dei dati
-- **2** media diversi (SSD locale + Cloud)
-- **1** copia off-site (Backblaze B2)
-
-| Dato | Frequenza | Destinazione |
-|------|-----------|--------------|
-| Config Docker | Giornaliero | Backblaze B2 |
-| Database | Giornaliero | Locale + B2 |
-| Media (Immich) | Settimanale | Backblaze B2 |
-| Documenti (Paperless) | Giornaliero | Backblaze B2 |
-
-Gestito tramite **Backrest** con Restic backend.
-
-## 🔧 Manutenzione
-
-### Aggiornamento Container
-```bash
-cd stacks/SERVICE_NAME
-docker compose pull
-docker compose up -d
-docker image prune -f
-```
-
-### Health Check
-```bash
-# Status tutti i container
-docker ps -a
-
-# Risorse sistema
-docker stats
-
-# Log specifico servizio
-docker compose logs -f SERVICE_NAME
-```
-
-### Pulizia periodica
-```bash
-# Pulizia Docker (ATTENZIONE: rimuove tutto lo inutilizzato)
-docker system prune -a
-
-# Solo immagini dangling
-docker image prune
-
-# Log di sistema
-sudo journalctl --vacuum-size=500M
-```
-
-## 📚 Documentazione Aggiuntiva
-
-- [Setup Iniziale](docs/setup/initial-setup.md)
-- [Configurazione Cloudflare](docs/setup/cloudflare-tunnel.md)
-- [Configurazione Storage](docs/setup/storage-configuration.md)
-- [Troubleshooting](docs/troubleshooting/)
-- [Decisioni Architetturali](docs/architecture/decisions.md)
-
-## 🤝 Contributing
-
-Questo è principalmente un progetto personale, ma suggerimenti e issue sono benvenuti!
-
-## 📝 License
-
-MIT License - Sentiti libero di usare e modificare per il tuo homelab.
+MIT License - Feel free to use and adapt for your own homelab.
 
 ---
 
-⚠️ **Disclaimer**: Questa documentazione riflette il mio setup personale. Adatta le configurazioni alle tue esigenze e al tuo ambiente di rete. I valori sensibili sono stati sostituiti con placeholder.
+**Note**: All sensitive values (IPs, tokens, passwords) have been replaced with placeholders. This is a sanitized version of a production configuration.
