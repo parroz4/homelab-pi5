@@ -227,6 +227,16 @@ docker compose up -d
 | Network | Gigabit Ethernet |
 | OS | Raspberry Pi OS (Debian Bookworm, 64-bit) |
 
+## Documentation
+
+| Guide | Description |
+|-------|-------------|
+| [Initial Setup](docs/setup/initial-setup.md) | Pi 5 setup, Docker installation, SSD mounting |
+| [Cloudflare Tunnel](docs/setup/cloudflare-tunnel.md) | Zero-trust external access configuration |
+| [Storage Configuration](docs/setup/storage-configuration.md) | Storage tiers, directories, permissions |
+| [Architecture Decisions](docs/architecture/decisions.md) | ADRs explaining key technical choices |
+| [Troubleshooting](docs/troubleshooting/common-issues.md) | Common issues and solutions |
+
 ## Future Improvements
 
 - [ ] Kubernetes migration (k3s) for learning
