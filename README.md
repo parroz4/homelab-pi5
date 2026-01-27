@@ -43,17 +43,17 @@ This repository documents a fully functional homelab infrastructure that I built
                     ┌──────────────────┼──────────────────┐
                     │           RASPBERRY PI 5            │
                     │                                     │
-                    │  ┌─────────────┐  ┌─────────────┐  │
-                    │  │  Pi-hole    │  │ Cloudflared │  │
-                    │  │  (DNS)      │  │  (Tunnel)   │  │
-                    │  └─────────────┘  └─────────────┘  │
+                    │  ┌─────────────┐  ┌─────────────┐   │
+                    │  │  Pi-hole    │  │ Cloudflared │   │
+                    │  │  (DNS)      │  │  (Tunnel)   │   │
+                    │  └─────────────┘  └─────────────┘   │
                     │                                     │
-                    │  ┌───────────────────────────────┐ │
-                    │  │     DOCKER CONTAINERS         │ │
-                    │  │  ┌─────┐ ┌─────┐ ┌─────┐     │ │
-                    │  │  │Media│ │ Mon │ │ Mgmt│ ... │ │
-                    │  │  └─────┘ └─────┘ └─────┘     │ │
-                    │  └───────────────────────────────┘ │
+                    │  ┌───────────────────────────────┐  │
+                    │  │     DOCKER CONTAINERS         │  │
+                    │  │  ┌─────┐ ┌─────┐ ┌─────┐      │  │ 
+                    │  │  │Media│ │ Mon │ │ Mgmt│ ...  │  │
+                    │  │  └─────┘ └─────┘ └─────┘      │  │
+                    │  └───────────────────────────────┘  │
                     │                  │                  │
                     └──────────────────┼──────────────────┘
                                        │
@@ -149,7 +149,7 @@ Each tool excels at its specific job rather than one mediocre all-in-one
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                    SECURITY LAYERS                       │
+│                    SECURITY LAYERS                      │
 ├─────────────────────────────────────────────────────────┤
 │  Layer 1: Cloudflare WAF + DDoS Protection              │
 │  Layer 2: Cloudflare Access (OAuth authentication)      │
