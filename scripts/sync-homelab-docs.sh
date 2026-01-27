@@ -57,20 +57,44 @@ sanitize_file() {
 
     # Paths
     sed -i 's|/home/francesco/stacksDocker|/home/user/stacks|g' "$file"
+    sed -i 's|/home/francesco|/home/user|g' "$file"
     sed -i 's|/media/francesco/BEA8-2D89|/mnt/external-drive|g' "$file"
 
-    # Cloudflare tokens (long alphanumeric strings after TUNNEL_TOKEN=)
+    # Cloudflare tokens
     sed -i 's/TUNNEL_TOKEN=.*/TUNNEL_TOKEN=${TUNNEL_TOKEN}/g' "$file"
 
     # App keys (Laravel style)
     sed -i 's/APP_KEY=base64:[A-Za-z0-9+/=]\+/APP_KEY=${APP_KEY}/g' "$file"
 
-    # Generic passwords in environment
+    # Pi-hole password
     sed -i "s/WEBPASSWORD: '[^']*'/WEBPASSWORD: '\${PIHOLE_PASSWORD}'/g" "$file"
 
-    # Placeholder paths
-    sed -i 's|/path/to/data|/path/to/data|g' "$file"
-    sed -i 's|/path/to-custom-ssl-keys|/path/to-custom-ssl-keys|g' "$file"
+    # Telegram bot tokens and chat IDs
+    sed -i 's/BOTTOKEN=[0-9]\+:[A-Za-z0-9_-]\+/BOTTOKEN=${TELEGRAM_BOT_TOKEN}/g' "$file"
+    sed -i 's/CHATID=[0-9]\+/CHATID=${TELEGRAM_CHAT_ID}/g' "$file"
+
+    # MySQL/MariaDB passwords
+    sed -i 's/MYSQL_ROOT_PASSWORD:.*/MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}/g' "$file"
+    sed -i 's/MYSQL_PASSWORD:.*/MYSQL_PASSWORD: ${MYSQL_PASSWORD}/g' "$file"
+
+    # Postgres passwords
+    sed -i 's/POSTGRES_PASSWORD:.*/POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}/g' "$file"
+    sed -i 's/POSTGRES_PASSWORD=.*/POSTGRES_PASSWORD=${POSTGRES_PASSWORD}/g' "$file"
+
+    # Generic admin credentials
+    sed -i 's/INIT_ADMIN_LOGIN=.*/INIT_ADMIN_LOGIN=${ADMIN_USER}/g' "$file"
+    sed -i 's/INIT_ADMIN_PASSWORD=.*/INIT_ADMIN_PASSWORD=${ADMIN_PASSWORD}/g' "$file"
+
+    # Usernames (parroz4, parroz44)
+    sed -i 's/parroz4[0-9]*/admin_user/g' "$file"
+
+    # Email addresses
+    sed -i 's/[a-zA-Z0-9._%+-]*@gmail\.com/${USER_EMAIL}/g' "$file"
+
+    # Generic secrets/keys/tokens (catch-all for common patterns)
+    sed -i 's/AUTH_SECRET=.*/AUTH_SECRET=${AUTH_SECRET}/g' "$file"
+    sed -i 's/password: .*/password: ${PASSWORD}/g' "$file"
+    sed -i 's/key: [A-Za-z0-9_-]\{20,\}/key: ${API_KEY}/g' "$file"
 }
 
 # Count synced files

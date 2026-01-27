@@ -44,7 +44,7 @@ services:
     environment:
       - POSTGRES_DB=warranty_db
       - POSTGRES_USER=warranty_user
-      - POSTGRES_PASSWORD=${DB_PASSWORD:-warranty_password}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     restart: unless-stopped
 
     healthcheck:

@@ -12,8 +12,8 @@ services:
     restart: always
     environment:
       - INIT_ADMIN=true
-      - INIT_ADMIN_LOGIN=parroz4
-      - INIT_ADMIN_PASSWORD=${PASSWORD}
+      - INIT_ADMIN_LOGIN=${ADMIN_USER}
+      - INIT_ADMIN_PASSWORD=${ADMIN_PASSWORD}
       - PUID=${PUID:-8888}
       - PGID=${PGID:-8888}
     ports:
