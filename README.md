@@ -1,8 +1,8 @@
 # Homelab Infrastructure - Raspberry Pi 5
 
-> A production-grade self-hosted infrastructure running 23 containerized services on a Raspberry Pi 5, demonstrating DevOps practices, Infrastructure as Code, and system administration skills.
+> A production-grade self-hosted infrastructure running 24 containerized services on a Raspberry Pi 5, demonstrating DevOps practices, Infrastructure as Code, and system administration skills.
 
-[![Docker](https://img.shields.io/badge/Docker-23_containers-blue?logo=docker)](https://www.docker.com/)
+[![Docker](https://img.shields.io/badge/Docker-24_containers-blue?logo=docker)](https://www.docker.com/)
 [![Raspberry Pi](https://img.shields.io/badge/Raspberry_Pi-5_(8GB)-red?logo=raspberrypi)](https://www.raspberrypi.com/)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
@@ -10,7 +10,7 @@
 
 This repository documents a fully functional homelab infrastructure that I built and maintain. It showcases practical experience with:
 
-- **Container Orchestration**: 23 Docker services managed via compose files
+- **Container Orchestration**: 24 Docker services managed via compose files
 - **Infrastructure as Code**: All configurations versioned and reproducible
 - **Networking & Security**: Zero-trust architecture with Cloudflare Tunnel
 - **Monitoring & Observability**: Multi-layer monitoring stack with alerting
@@ -63,7 +63,7 @@ This repository documents a fully functional homelab infrastructure that I built
                               └─────────────────┘
 ```
 
-## Services Stack (23 containers)
+## Services Stack (24 containers)
 
 ### Media & Storage
 | Service | Purpose | Why I Chose It |
@@ -82,6 +82,7 @@ This repository documents a fully functional homelab infrastructure that I built
 | **NetAlertX** | Network discovery | Track all devices |
 | **WUD** | Container updates | Know when to update |
 | **LoggiFly** | Log monitoring | Real-time Telegram alerts |
+| **Diun** | Image updates | Notifies when new versions available |
 | **Speedtest Tracker** | ISP monitoring | Historical bandwidth data |
 | **ChangeDetection** | Website monitoring | Track external changes |
 

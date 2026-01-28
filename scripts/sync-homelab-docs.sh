@@ -42,6 +42,7 @@ declare -A FOLDER_MAP=(
     ["wud"]="monitoring/wud"
     ["loggifly"]="monitoring/loggifly"
     ["sync-in"]="media/sync-in"
+    ["diun"]="monitoring/diun"
 )
 
 # Sanitization function
