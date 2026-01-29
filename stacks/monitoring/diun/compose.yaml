@@ -19,5 +19,4 @@ services:
       # Telegram notifications
       - DIUN_NOTIF_TELEGRAM_TOKEN=${TELEGRAM_BOT_TOKEN}
       - DIUN_NOTIF_TELEGRAM_CHATIDS=${TELEGRAM_CHAT_ID}
-      - DIUN_NOTIF_TELEGRAM_TEMPLATEBODY={{`{{ .Entry.Image.Path }}:{{ .Entry.Image.Tag }} - New version available!`}}
     restart: unless-stopped
